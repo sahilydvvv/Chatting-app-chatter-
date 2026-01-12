@@ -1,11 +1,12 @@
 import express from "express";
 const router = express.Router();
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { createConversation, getConversation } from "../controllers/conversation.controller.js";
 
 router.use(authMiddleware);
 
-router.post('/',createConversation);
+router.post('/', createConversation);
 
-router.get('/',getConversation);
+router.get('/', getConversation);
 
 export default router;
