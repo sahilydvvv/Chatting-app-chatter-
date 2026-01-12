@@ -1,5 +1,6 @@
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
+import { getSocketIO } from "../socketInstance.js";
 
 export const sendMessage = async (req, res) => {
   try {
@@ -25,6 +26,10 @@ export const sendMessage = async (req, res) => {
     await Conversation.findByIdAndUpdate(conversationId, {
       lastMessage: message._id,
     });
+
+    const io = getSocketIO();
+    io.to(conversationId).emit("receiveMessage", message);
+
 
     return res.status(201).json(message);
   } catch (error) {

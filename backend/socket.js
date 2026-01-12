@@ -7,11 +7,11 @@ const initSocketIO = (io) => {
       console.log("Joined room:", conversationId);
     });
 
-    socket.on("sendMessage", (message) => {
-      const { conversationId } = message;
+    // socket.on("sendMessage", (message) => {
+    //   const { conversationId } = message;
 
-      socket.to(conversationId).emit("receiveMessage", message);
-    });
+    //   socket.to(conversationId).emit("receiveMessage", message);
+    // });
 
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);

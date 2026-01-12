@@ -10,6 +10,7 @@ import cors from "cors";
 import conversationRoute from "./src/routes/conversation.route.js";
 import messageRoute from "./src/routes/message.route.js";
 import initSocketIO from "./socket.js";
+import { setSocketIO } from "./socketInstance.js";
 
 const app = express();
 const server = createServer(app);
@@ -24,6 +25,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 const io = new Server(server, {});
+
+setSocketIO(io);
 
 
 const startServer = async () => {
