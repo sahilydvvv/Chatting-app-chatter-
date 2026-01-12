@@ -1,3 +1,5 @@
+import Conversation from "../models/Conversation.js";
+
 export const createConversation = async (req,res)=>{
     try {
         const myId = req.user.id;
