@@ -1,4 +1,5 @@
 import Conversation from "../models/Conversation.js";
+import Message from "../models/Message.js";
 
 export const createConversation = async (req, res) => {
   try {
@@ -38,9 +39,23 @@ export const getConversation = async (req, res) => {
       .populate("lastMessage")
       .sort({ updatedAt: -1 });
 
+    const conversationsWithUnread = await Promise.all(
+      conversations.map(async (conv) => {
+        const unreadCount = await Message.countDocuments({
+          conversationId: conv._id,
+          receiver: myId,
+          read: false,
+        });
+        return {
+          ...conv.toObject(),
+          unreadCount,
+        };
+      })
+    );
+
     return res.status(200).json({
-      conversations,
-      count: conversations.length,
+      conversations: conversationsWithUnread,
+      count: conversationsWithUnread.length,
     });
   } catch (error) {
     console.log("Error getting conversation", error);

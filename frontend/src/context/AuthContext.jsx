@@ -52,9 +52,16 @@ export const AuthContextProvider = ({ children }) => {
     setIsAuth(false);
   };
 
+  const updateUserProfile = async (data) => {
+    const res = await api.patch("/auth/updateProfile", data);
+    if (res.data.user) {
+      setUser((prev) => ({ ...prev, ...res.data.user }));
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, isAuth, loading, login, logout, signup }}
+      value={{ user, isAuth, loading, login, logout, signup, updateUserProfile }}
     >
       {children}
     </AuthContext.Provider>

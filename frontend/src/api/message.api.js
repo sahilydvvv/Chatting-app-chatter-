@@ -39,3 +39,13 @@ export const deleteMessage = async (messageId) => {
     throw error;
   }
 };
+
+export const markAsRead = async (conversationId) => {
+  try {
+    const response = await api.post(`/messages/read/${conversationId}`);
+    return response.data;
+  } catch (error) {
+    console.log("error marking messages as read", error);
+    throw error;
+  }
+};

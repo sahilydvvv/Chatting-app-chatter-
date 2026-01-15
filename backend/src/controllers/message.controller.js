@@ -30,8 +30,8 @@ export const sendMessage = async (req, res) => {
 
     const io = getSocketIO();
     io.to(conversationId).emit("receiveMessage", message);
-    io.to(receiverId).emit("receiveMessage", message); // Notify receiver
-    io.to(myId).emit("receiveMessage", message); // Notify sender's own other tabs/components
+    io.to(receiverId).emit("receiveMessage", message);
+    io.to(myId).emit("receiveMessage", message);
 
 
     return res.status(201).json(message);
@@ -50,7 +50,7 @@ export const getMessages = async (req, res) => {
     }
 
     const messages = await Message.find({ conversationId })
-      .sort({ createdAt: 1 }); // oldest → newest
+      .sort({ createdAt: 1 });
 
     return res.status(200).json(messages);
   } catch (error) {
@@ -101,6 +101,24 @@ export const deleteMessage = async (req, res) => {
   } catch (error) {
     console.log("Error in deleteMessage controller", error);
     return res.status(500).json({ message: "Error in deleteMessage controller" });
+  }
+};
+
+
+export const markMessagesAsRead = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const myId = req.user.id;
+
+    await Message.updateMany(
+      { conversationId, receiver: myId, read: false },
+      { $set: { read: true } }
+    );
+
+    return res.status(200).json({ message: "Messages marked as read" });
+  } catch (error) {
+    console.log("Error marking messages as read", error);
+    return res.status(500).json({ message: "Error marking messages as read" });
   }
 };
 

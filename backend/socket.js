@@ -12,6 +12,14 @@ const initSocketIO = (io) => {
       console.log("User joined personal room:", userId);
     });
 
+    socket.on("typing", ({ conversationId, senderName }) => {
+      socket.to(conversationId).emit("typing", senderName);
+    });
+
+    socket.on("stopTyping", (conversationId) => {
+      socket.to(conversationId).emit("stopTyping");
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
     });

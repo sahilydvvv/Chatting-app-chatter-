@@ -150,7 +150,7 @@ export const authenticate = async (req, res) => {
 export const getUsers = async (req, res) => {
     try {
         const users = await User.find({
-            _id: { $ne: req.user.id }, // exclude logged-in user
+            _id: { $ne: req.user.id },
         }).select("-password");
 
         res.status(200).json(users);
