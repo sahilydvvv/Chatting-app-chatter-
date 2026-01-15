@@ -1,6 +1,7 @@
 let io;
 
 export const setSocketIO = (ioInstance) => {
+    console.log("setting socket io");
     io = ioInstance;
 };
 

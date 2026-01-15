@@ -2,11 +2,11 @@ import User from "../models/User.js"
 import bcrypt from "bcryptjs"
 import { generateToken } from "../utils/generateToken.js"
 
-export const signup = async (req,res)=>{
+export const signup = async (req, res) => {
     try {
-        const{email,password,name,phoneNumber} =req.body;
-        if(!email || !password || !name || !phoneNumber){
-            return res.status(400).json({message:"All fields are required"})
+        const { email, password, name, phoneNumber } = req.body;
+        if (!email || !password || !name || !phoneNumber) {
+            return res.status(400).json({ message: "All fields are required" })
         }
         const emailToLowerCase = email.toLowerCase()
         const existingUser = await User.findOne({ email: emailToLowerCase })
@@ -28,7 +28,8 @@ export const signup = async (req,res)=>{
                 name: newUser.name,
                 email: newUser.email,
                 phoneNumber: newUser.phoneNumber,
-                id: newUser._id
+                id: newUser._id,
+                _id: newUser._id,
             }
         })
     } catch (error) {
@@ -60,7 +61,8 @@ export const login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phoneNumber: user.phoneNumber,
-                id: user._id
+                id: user._id,
+                _id: user._id,
             }
         })
     } catch (error) {
@@ -131,12 +133,29 @@ export const deleteProfile = async (req, res) => {
     }
 }
 
-export const authenticate = (req,res)=>{
+export const authenticate = async (req, res) => {
     try {
         const userId = req.user.id;
-        return res.status(200).json({message:"User fetched successfully",user:{id:userId}})
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        return res.status(200).json({ message: "User fetched successfully", user });
     } catch (error) {
-        console.log("Error fetching user",error)
-        return res.status(500).json({message:"Internal server error"})
+        console.log("Error fetching user", error)
+        return res.status(500).json({ message: "Internal server error" })
     }
 }
+
+export const getUsers = async (req, res) => {
+    try {
+        const users = await User.find({
+            _id: { $ne: req.user.id }, // exclude logged-in user
+        }).select("-password");
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.log("Error fetching users", error);
+        res.status(500).json({ message: "Error fetching users" });
+    }
+};

@@ -1,6 +1,7 @@
 import Message from "../models/Message.js";
 import Conversation from "../models/Conversation.js";
-import { getSocketIO } from "../socketInstance.js";
+
+import { getSocketIO } from "../../socketInstance.js"
 
 export const sendMessage = async (req, res) => {
   try {
@@ -29,6 +30,8 @@ export const sendMessage = async (req, res) => {
 
     const io = getSocketIO();
     io.to(conversationId).emit("receiveMessage", message);
+    io.to(receiverId).emit("receiveMessage", message); // Notify receiver
+    io.to(myId).emit("receiveMessage", message); // Notify sender's own other tabs/components
 
 
     return res.status(201).json(message);
